@@ -28,13 +28,28 @@ app.get('/api/courses/:name', (req, res) => {
   })
 })
 
+app.get('/api/courses', (req, res) => {
+  db.courses.find({}, (err, courses) => {
+    return res.json(courses);
+  })
+})
+
 app.post('/api/courses/:name', (req, res) => {
   const name = req.params.name;
 
   getCourse(name, (err, body) => {
     if (!err) {
+      if (body.code && body.message) {
+        return res.json({success: false, message: body.message});
+      } else {
+        const course = {...body, alias: name};
+
+        db.courses.insert(course, () => {
+          return res.json({success: true});
+        });
+      }
       // call to download service
-      return res.json(body);
+
     }
   })
 })
@@ -132,14 +147,19 @@ const getRedirectUrl = (originUrl) => {
   })
 }
 
-const getUtilSuccess = (originUrl) => {
+const getUtilSuccess = (originUrl, times = 0) => {
   return getRedirectUrl(originUrl)
     .then(body => {
-      if (parseInt(body.code) === 400) {
-        return getUtilSuccess(originUrl);
+      console.log('body', body);
+      if (parseInt(body.code / 100) === 4) {
+        console.log('retry', times++);
+        return getUtilSuccess(originUrl, times + 1);
       } else {
         return Promise.resolve(body.url);
       }
+    })
+    .catch(err => {
+      console.log(err);
     })
 }
 
