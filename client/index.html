@@ -1,13 +1,21 @@
 <html>
   <head>
     <title>Video for education</title>
+    <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <div id="app">
-      <p>{{ message }}</p>
+      <span v-if="errMessage" class="err-message">{{errMessage}}</span>
+      <input v-model="courseUrl" >
+      <button
+        v-on:click="crawlCourse"
+        v-bind:disabled="isRequesting"
+        >Get
+      </button>
     </div>
 
     <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
