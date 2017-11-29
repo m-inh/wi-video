@@ -17,7 +17,6 @@ app.get('/api/courses/:name', (req, res) => {
   getCourse(name, (err, body) => {
     if (!err) res.json(body);
   })
-
 })
 
 app.get('/api/courses/:name/sources', (req, res) => {
@@ -54,10 +53,6 @@ const getCourse = (name, cb) => {
 
   request(options, function(error, response, body) {
     if (error) return cb(error);
-
-    // console.log('body', body);
-    // console.log('========================');
-    // console.log('response', response);
 
     return cb(null, body);
   });
