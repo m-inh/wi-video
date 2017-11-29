@@ -1,11 +1,20 @@
 'use strict';
 
 const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
 const request = require("request");
 const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const db = require('./db');
+
+//================== middleware ==================
+app.use(cors());
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/api', (req, res) => {
   res.end('Welcome you')
@@ -30,6 +39,30 @@ app.get('/api/courses/:name/sources', (req, res) => {
       .map(sourceUrl => sourceUrl + '?r=720&f=webm');
 
     res.json(sourceVideos);
+  })
+})
+
+app.get('/api/courses/:course_name/uploaded-videos', (req, res) => {
+  const course_name = req.params.course_name;
+
+  db.videos.find({course_name: course_name}, (err, newVideo) => {
+    if (err) return res.send('err');
+
+    return res.json(newVideo);
+  })
+})
+
+app.post('/api/courses/:course_name/uploaded-videos', (req, res) => {
+  const video = {
+    course_name: req.params.course_name,
+    name: req.body.name,
+    url: req.body.url
+  }
+
+  db.videos.insert(video, (err, newVideo) => {
+    if (err) return res.send('err');
+
+    return res.json(newVideo);
   })
 })
 
