@@ -132,15 +132,13 @@ const getRedirectUrl = (originUrl) => {
   })
 }
 
-let count = 0;
-
-const getUtilSuccess = (originUrl) => {
+const getUtilSuccess = (originUrl, times = 0) => {
   return getRedirectUrl(originUrl)
     .then(body => {
       console.log('body', body);
       if (parseInt(body.code / 100) === 4) {
-        console.log('retry', count++);
-        return getUtilSuccess(originUrl);
+        console.log('retry', times++);
+        return getUtilSuccess(originUrl, times + 1);
       } else {
         return Promise.resolve(body.url);
       }
