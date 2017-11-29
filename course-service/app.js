@@ -132,14 +132,21 @@ const getRedirectUrl = (originUrl) => {
   })
 }
 
+let count = 0;
+
 const getUtilSuccess = (originUrl) => {
   return getRedirectUrl(originUrl)
     .then(body => {
-      if (parseInt(body.code) === 400) {
+      console.log('body', body);
+      if (parseInt(body.code / 100) === 4) {
+        console.log('retry', count++);
         return getUtilSuccess(originUrl);
       } else {
         return Promise.resolve(body.url);
       }
+    })
+    .catch(err => {
+      console.log(err);
     })
 }
 
