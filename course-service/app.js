@@ -28,13 +28,28 @@ app.get('/api/courses/:name', (req, res) => {
   })
 })
 
+app.get('/api/courses', (req, res) => {
+  db.courses.find({}, (err, courses) => {
+    return res.json(courses);
+  })
+})
+
 app.post('/api/courses/:name', (req, res) => {
   const name = req.params.name;
 
   getCourse(name, (err, body) => {
     if (!err) {
+      if (body.code && body.message) {
+        return res.json({success: false, message: body.message});
+      } else {
+        const course = {...body, alias: name};
+
+        db.courses.insert(course, () => {
+          return res.json({success: true});
+        });
+      }
       // call to download service
-      return res.json(body);
+
     }
   })
 })

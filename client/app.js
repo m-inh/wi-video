@@ -18,12 +18,12 @@ new Vue({
 	    this.isRequesting = true;
       fetchCourse(this.courseUrl)
         .then(body => {
-          if (body.data.code && body.data.message) {
-            throw new Error(body.data.message)
-          } else {
+          if (body.data.success) {
             // window.location = '/'
             this.errMessage = '';
             console.log('success');
+          } else {
+            throw new Error(body.data.message)
           }
         })
         .catch(err => {
