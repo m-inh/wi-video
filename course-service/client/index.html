@@ -9,9 +9,18 @@
       <input v-model="courseUrl" >
       <button
         v-on:click="crawlCourse"
-        v-bind:disabled="isRequesting"
-        >Get
+        v-bind:disabled="isRequesting">Get
       </button>
+
+      <h3>Course đã thêm:</h3>
+      <div>
+        <course-item v-for="course in courses" v-bind:course="course"></course-item>
+      </div>
+
+      <h3>Video đã tải:</h3>
+      <div>
+        <video-item v-for="video in videos" v-bind:video="video"></video-item>
+      </div>
     </div>
 
     <script src="https://unpkg.com/vue"></script>

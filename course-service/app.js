@@ -16,6 +16,8 @@ app.use(cors());
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use(express.static('client'));
+
 app.get('/api', (req, res) => {
   res.end('Welcome you')
 })
@@ -42,15 +44,35 @@ app.post('/api/courses/:name', (req, res) => {
       if (body.code && body.message) {
         return res.json({success: false, message: body.message});
       } else {
-        const course = {...body, alias: name};
+        const course = {...body, alias: name, done: false};
 
-        db.courses.insert(course, () => {
-          return res.json({success: true});
-        });
+        db.courses.find({alias: name}, (err, docs) => {
+          if (err) throw new Error(err);
+
+          if (docs.length > 0) {
+            return res.json({success: true});
+          }
+
+          db.courses.insert(course, () => {
+            return res.json({success: true});
+          });
+        })
       }
       // call to download service
 
     }
+  })
+})
+
+app.post('/api/courses/:name/done', (req, res) => {
+  const name = req.params.name;
+
+  db.courses.findOne({alias: name}, (err, doc) => {
+    if (err || !doc) throw new Error(err || 'Khong tim thay course');
+
+    db.courses.update({_id: doc._id}, {$set: {done: true}}, {}, () => {
+      return res.json({success: true});
+    });
   })
 })
 
@@ -99,6 +121,10 @@ app.post('/api/courses/:course_name/uploaded-videos', (req, res) => {
 
     return res.json(newVideo);
   })
+})
+
+app.get('*', (req, res) => {
+ res.sendFile(path.resolve(__dirname, 'client', 'index.html'))
 })
 
 const baseOptions = {
