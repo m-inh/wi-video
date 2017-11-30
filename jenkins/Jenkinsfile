@@ -1,0 +1,19 @@
+pipeline {
+    agent {
+        label 'master'
+    }
+
+    stages {
+      stage('Install Dependencies') {
+          steps {
+              sh 'npm i'
+          }
+      }
+
+      stage('Deploy to production') {
+          steps {
+			        sh 'sudo pm2 start course-service/app.js --name=video --update-env'
+          }
+      }
+    }
+}
