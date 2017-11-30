@@ -76,15 +76,19 @@ app.post('/api/courses/:name/done', (req, res) => {
   })
 })
 
-app.get('/api/courses/:name/sources', (req, res) => {
+app.get('/api/courses/:name/lessions', (req, res) => {
   const name = req.params.name;
 
   getCourse(name, (err, body) => {
     if (err) throw new Error(err);
 
     const sourceVideos = body.lessonData
-      .map(lession => lession.sourceBase)
-      .map(sourceUrl => sourceUrl + '/source?r=720&f=webm');
+      // .map(lession => lession.sourceBase)
+      .map(data => {
+        const lession = {...data};
+        lession.sourceBase += '/source?r=720&f=webm';
+        return lession;
+      });
 
     return res.json(sourceVideos);
   })
