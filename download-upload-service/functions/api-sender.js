@@ -41,7 +41,7 @@ const getUtilSuccess = (originUrl, times = 0) => {
     .then(body => {
       console.log('body', body);
       if (parseInt(body.code / 100) === 4) {
-        console.log('retry', times++);
+        console.log('retry', times);
         return getUtilSuccess(originUrl, times + 1);
       } else {
         return Promise.resolve(body.url);
