@@ -28,8 +28,8 @@ function getMedia(folderName, driveAuth, callback) {
             let link = ob.sourceBase;
             let title = ob.title;
             let slug = ob.slug;
-
-            apiSender.getUtilSuccess(config.app.courseService + '/api/sources').then(url => {
+            console.log("Get driect from link : ", link);
+            apiSender.getUtilSuccess(link).then(url => {
                 console.log("Successful : ", url);
                 downloadFile.downloadFile(url, function () {
                     drive.createFolder(driveAuth, folderName, function (err, folderId) {
