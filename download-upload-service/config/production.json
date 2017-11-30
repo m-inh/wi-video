@@ -1,6 +1,7 @@
 {
   "app": {
     "port": 3000,
-    "videoTmp": "D:/youtube"
+    "videoTmp": "D:/youtube",
+    "courseService": "http://localhost:3001"
   }
 }

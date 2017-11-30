@@ -2,12 +2,16 @@ let express = require('express');
 let router = express.Router();
 let request = require('request');
 let asyncEach = require('node-async-loop');
+let config = require('config');
+let drive = require('../functions/drive');
 let downloadFile = require('../functions/downloadFileStream');
+let path = require('path');
 
-function getMedia(driveAuth, callback) {
+function getMedia(folderName, driveAuth, callback) {
+    let url = config.app.courseService + '/api/courses/' + folderName + '/lessions';
     var options = {
         method: 'GET',
-        url: 'http://localhost:3001/api/courses/functional-javascript-v2/sources',
+        url: url,
         headers:
             {
                 'postman-token': '617efd23-e777-cce3-27a5-56715d99adc9',
@@ -17,11 +21,15 @@ function getMedia(driveAuth, callback) {
 
     request(options, function (error, response, body) {
         if (error) throw new Error(error);
-        let links = JSON.parse(body);
-        asyncEach(links, function (link, next) {
+        let obj = JSON.parse(body);
+        console.log(obj);
+        asyncEach(obj, function (ob, next) {
+            let link = ob.sourceBase;
+            let title = ob.title;
+            let slug = ob.slug;
             let op = {
                 method: 'POST',
-                url: 'http://localhost:3001/api/sources',
+                url: config.app.courseService + '/api/sources',
                 headers: {
                     'postman-token': '617efd23-e777-cce3-27a5-56715d99adc9',
                     'cache-control': 'no-cache'
@@ -35,7 +43,28 @@ function getMedia(driveAuth, callback) {
                 if (body.url) {
                     console.log("Successful : ", body);
                     downloadFile.downloadFile(body.url, function () {
-                        next();
+                        drive.createFolder(driveAuth, folderName, function (err, folderId) {
+                            let filePath = path.join(config.app.videoTmp, 'videoTemp.webm');
+                            drive.uploadFile(driveAuth, folderId, filePath, slug + '.mp4', function (err, result) {
+                                console.log("DONE ======================= ", folderName + " : " + slug);
+                                let myURL = config.app.courseService + '/api/courses/' + folderName + '/done';
+                                var options = {
+                                    method: 'POST',
+                                    url: myURL,
+                                    headers:
+                                        {
+                                            'postman-token': '4988ad6a-c616-19ea-ad27-e47ce554b869',
+                                            'cache-control': 'no-cache',
+                                            'content-type': 'application/x-www-form-urlencoded'
+                                        },
+                                    form: {}
+                                };
+                                request(options, function (error, response, body) {
+                                    if (error) console.log(error);
+                                    next();
+                                });
+                            });
+                        });
                     });
                 } else {
                     console.log("Can't get : ", link);
@@ -55,8 +84,9 @@ function getMedia(driveAuth, callback) {
 
 }
 
-router.get('/', function (req, res) {
-    getMedia(req.auth, function () {
+router.get('/:topic', function (req, res) {
+    let folderName = req.params.topic;
+    getMedia(folderName, req.auth, function () {
         res.send("Done");
     });
 });
