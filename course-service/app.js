@@ -32,6 +32,16 @@ app.get('/api/courses/:name', (req, res) => {
   })
 })
 
+app.delete('/api/courses/:name', (req, res) => {
+  const name = req.params.name;
+
+  db.courses.remove({alias: name}, {}, (err, count) => {
+    if (err) throw new Error('Something went wrong');
+
+    res.json({success: true, remove: count});
+  })
+})
+
 app.get('/api/courses', (req, res) => {
   db.courses.find({}, (err, courses) => {
     return res.json(courses);
