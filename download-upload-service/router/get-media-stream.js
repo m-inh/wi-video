@@ -6,6 +6,7 @@ let config = require('config');
 let drive = require('../functions/drive');
 let downloadFile = require('../functions/downloadFileStream');
 let path = require('path');
+let apiSender = require('../functions/api-sender');
 
 function getMedia(folderName, driveAuth, callback) {
     let url = config.app.courseService + '/api/courses/' + folderName + '/lessions';
@@ -27,35 +28,50 @@ function getMedia(folderName, driveAuth, callback) {
             let link = ob.sourceBase;
             let title = ob.title;
             let slug = ob.slug;
-            let op = {
-                method: 'POST',
-                url: config.app.courseService + '/api/sources',
-                headers: {
-                    'postman-token': '617efd23-e777-cce3-27a5-56715d99adc9',
-                    'cache-control': 'no-cache'
-                },
-                form: {
-                    'origin': link
-                }
-            }
-            request(op, function (error, response, body) {
-                body = JSON.parse(body);
-                if (body.url) {
-                    console.log("Successful : ", body);
-                    downloadFile.downloadFile(body.url, function () {
-                        drive.createFolder(driveAuth, folderName, function (err, folderId) {
-                            let filePath = path.join(config.app.videoTmp, 'videoTemp.webm');
-                            drive.uploadFile(driveAuth, folderId, filePath, slug + '.mp4', function (err, result) {
-                                console.log("DONE ======================= ", folderName + " : " + slug);
-                                next();
-                            });
+
+            apiSender.getUtilSuccess(config.app.courseService + '/api/sources').then(url => {
+                console.log("Successful : ", url);
+                downloadFile.downloadFile(url, function () {
+                    drive.createFolder(driveAuth, folderName, function (err, folderId) {
+                        let filePath = path.join(config.app.videoTmp, 'videoTemp.webm');
+                        drive.uploadFile(driveAuth, folderId, filePath, slug + '.mp4', function (err, result) {
+                            console.log("DONE ======================= ", folderName + " : " + slug);
+                            next();
                         });
                     });
-                } else {
-                    console.log("Can't get : ", link);
-                    next();
-                }
+                });
+            }).catch(err => {
+                console.log("API SENDER ERROR : ", err);
             });
+            // let op = {
+            //     method: 'POST',
+            //     url: config.app.courseService + '/api/sources',
+            //     headers: {
+            //         'postman-token': '617efd23-e777-cce3-27a5-56715d99adc9',
+            //         'cache-control': 'no-cache'
+            //     },
+            //     form: {
+            //         'origin': link
+            //     }
+            // }
+            // request(op, function (error, response, body) {
+            //     body = JSON.parse(body);
+            //     if (body.url) {
+            //         console.log("Successful : ", body);
+            //         downloadFile.downloadFile(body.url, function () {
+            //             drive.createFolder(driveAuth, folderName, function (err, folderId) {
+            //                 let filePath = path.join(config.app.videoTmp, 'videoTemp.webm');
+            //                 drive.uploadFile(driveAuth, folderId, filePath, slug + '.mp4', function (err, result) {
+            //                     console.log("DONE ======================= ", folderName + " : " + slug);
+            //                     next();
+            //                 });
+            //             });
+            //         });
+            //     } else {
+            //         console.log("Can't get : ", link);
+            //         next();
+            //     }
+            // });
 
         }, function (err) {
             if (err) {
