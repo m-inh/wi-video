@@ -88,7 +88,7 @@ function getMedia(folderName, driveAuth, callback) {
 router.get('/:topic', function (req, res) {
     let folderName = req.params.topic;
     getMedia(folderName, req.auth, function () {
-        res.status(200).send(JSON.parse("{result: 'Successfull'}"));
+        res.status(200).send(JSON.parse("{'result': 'Successfull'}"));
     });
 });
 
