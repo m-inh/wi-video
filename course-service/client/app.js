@@ -27,7 +27,7 @@ new Vue({
   data: {
     errMessage: '',
     courseUrl: '',
-    courses: [{title: 'ok men', done: true}, {title: 'ok men 2', done: false}],
+    courses: [],
     videos: [{title: 'ok men', url: '#'}, {title: 'ok men 2', url: 'localhost:3000'}],
     isRequesting: false
   },

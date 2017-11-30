@@ -11,6 +11,8 @@ const PORT = process.env.PORT || 3000;
 
 const db = require('./db');
 
+const HOANG_URL = 'http://video.sflow.me:3000/media';
+
 //================== middleware ==================
 app.use(cors());
 app.use(bodyParser.json({limit: '50mb'}));
@@ -53,13 +55,22 @@ app.post('/api/courses/:name', (req, res) => {
             return res.json({success: true});
           }
 
-          db.courses.insert(course, () => {
-            return res.json({success: true});
-          });
+          startCrawlCourse(name)
+            .then(body => {
+              if (body.success) {
+                db.courses.insert(course, () => {
+                  return res.json({success: true});
+                });
+              } else {
+                throw new Error('Khong the ket noi voi Hoang');
+              }
+            })
+            .catch(err => {
+              console.log(err);
+              return res.json({success: false, message: err.message});
+            })
         })
       }
-      // call to download service
-
     }
   })
 })
@@ -144,6 +155,20 @@ const baseOptions = {
      accept: 'application/json, text/*'
   },
   json: true
+}
+
+const startCrawlCourse = (name) => {
+  const options = {...baseOptions};
+  options.method = 'GET';
+  options.url = HOANG_URL + '/' + name;
+
+  return new Promise((resolve, reject) => {
+    request(options, function(error, response, body) {
+      if (error) return reject(error);
+
+      return resolve(body);
+    });
+  })
 }
 
 const getCourse = (name, cb) => {
