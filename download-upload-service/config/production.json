@@ -2,6 +2,6 @@
   "app": {
     "port": 3000,
     "videoTmp": "D:/youtube",
-    "courseService": "http://localhost:3001"
+    "courseService": "https://video.adsbold.com"
   }
 }

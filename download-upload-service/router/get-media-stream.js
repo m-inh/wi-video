@@ -75,6 +75,7 @@ function getMedia(folderName, driveAuth, callback) {
         }, function (err) {
             if (err) {
                 console.log("Got error : ", err);
+                callback();
             } else {
                 console.log("All DONE");
                 callback();
@@ -87,7 +88,7 @@ function getMedia(folderName, driveAuth, callback) {
 router.get('/:topic', function (req, res) {
     let folderName = req.params.topic;
     getMedia(folderName, req.auth, function () {
-        res.send("Done");
+        res.status(200).send(JSON.parse("{result: 'Successfull'}"));
     });
 });
 
