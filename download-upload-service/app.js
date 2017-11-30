@@ -7,7 +7,8 @@ const bodyParser = require('body-parser');
 const drive = require('./functions/drive');
 const config = require('config');
 const PORT = config.app.port;
-
+const path = require('path');
+const fs = require('fs');
 let oauth2Client = require('./functions/OAuth2').oAuth2Client;
 let url = require('./functions/OAuth2').url;
 
@@ -17,6 +18,14 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 
 let getMediaStreamRouter = require('./router/get-media-stream');
+
+
+fs.watchFile(path.join(config.app.videoTmp, 'videoTemp.webm'), function () {
+    fs.stat(path.join(config.app.videoTmp, 'videoTemp.webm'), function (err, stats) {
+        console.log("Downloaded : ", stats.size + 'kb');
+    });
+});
+
 
 app.get('/cb', function (req, res, next) {
     let code = req.query.code;
