@@ -47,22 +47,7 @@ function getMedia(folderName, driveAuth, callback) {
                             let filePath = path.join(config.app.videoTmp, 'videoTemp.webm');
                             drive.uploadFile(driveAuth, folderId, filePath, slug + '.mp4', function (err, result) {
                                 console.log("DONE ======================= ", folderName + " : " + slug);
-                                let myURL = config.app.courseService + '/api/courses/' + folderName + '/done';
-                                var options = {
-                                    method: 'POST',
-                                    url: myURL,
-                                    headers:
-                                        {
-                                            'postman-token': '4988ad6a-c616-19ea-ad27-e47ce554b869',
-                                            'cache-control': 'no-cache',
-                                            'content-type': 'application/x-www-form-urlencoded'
-                                        },
-                                    form: {}
-                                };
-                                request(options, function (error, response, body) {
-                                    if (error) console.log(error);
-                                    next();
-                                });
+                                next();
                             });
                         });
                     });
@@ -87,8 +72,24 @@ function getMedia(folderName, driveAuth, callback) {
 
 router.get('/:topic', function (req, res) {
     let folderName = req.params.topic;
+    res.status(200).send("WORKING");
     getMedia(folderName, req.auth, function () {
-        res.status(200).send(JSON.parse("{'result': 'Successfull'}"));
+        let myURL = config.app.courseService + '/api/courses/' + folderName + '/done';
+        var options = {
+            method: 'POST',
+            url: myURL,
+            headers:
+                {
+                    'postman-token': '4988ad6a-c616-19ea-ad27-e47ce554b869',
+                    'cache-control': 'no-cache',
+                    'content-type': 'application/x-www-form-urlencoded'
+                },
+            form: {}
+        };
+        request(options, function (error, response, body) {
+            if (error) console.log(error);
+            console.log("DONE ALL");
+        });
     });
 });
 
