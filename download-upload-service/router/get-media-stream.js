@@ -72,7 +72,7 @@ function getMedia(folderName, driveAuth, callback) {
 
 router.get('/:topic', function (req, res) {
     let folderName = req.params.topic;
-    res.status(200).send("WORKING");
+    res.status(200).json({success: true});
     getMedia(folderName, req.auth, function () {
         let myURL = config.app.courseService + '/api/courses/' + folderName + '/done';
         var options = {
