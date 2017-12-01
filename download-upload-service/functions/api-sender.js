@@ -6,7 +6,7 @@ const baseOptions = {
   headers: {
     'postman-token': '205d5329-d628-7702-2e8a-afb8865330ef',
      'cache-control': 'no-cache',
-     cookie: 'wordpress_logged_in_323a64690667409e18476e5932ed231e=tienminh.uet_gmail.com%7C1513052977%7CaqBB6q8PnFrrAFDlPtUwDMpua22N1fW1wDid1u6SFtf%7C6fe69a420b8283f2db350c353633f5b2256ed8b2690b365cf00650b2519aac06; __stripe_mid=338b2aee-c462-4079-bca8-8e9105c7fdd2; _ga=GA1.2.1520826322.1511842839; _gid=GA1.2.373345617.1511941425; intercom-id-w1ukcwje=bf8d93d3-a13a-40a4-b76c-0952b00770d7',
+     cookie: 'edd_wp_session=b96a513742a94b4392c7eb6dc452ea59%7C%7C1512158120%7C%7C1512156320; wordpress_logged_in_323a64690667409e18476e5932ed231e=bdhoang.ht_gmail.com%7C1513324520%7Cetu85nH27kcZ1BOBTOqOMkaEIq0IevB6OR1wBBjXgPU%7C6897bece951a21180c4e85421be5032dff03d940c2602b5ce7c7be26f4f11318; _ga=GA1.2.1047265518.1512114861; _gid=GA1.2.1839940612.1512114861; intercom-id-w1ukcwje=8320388d-9b77-445b-a2bf-6232bfdb442d',
      'accept-language': 'en-US,en;q=0.9,vi;q=0.8,la;q=0.7',
      referer: 'https://frontendmasters.com/courses/functional-javascript-v2/functional-programming/',
      'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
