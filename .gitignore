@@ -6,3 +6,4 @@ node_modules
 database
 /package-lock.json
 /download-upload-service/package-lock.json
+/download-upload-service/functions/secrets.json

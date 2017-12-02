@@ -18,6 +18,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 
 let getMediaStreamRouter = require('./router/get-media-stream');
+let scanDriveFilesRouter = require('./router/scan-drive-files');
 
 
 fs.watchFile(path.join(config.app.videoTmp, 'videoTemp.webm'), function () {
@@ -73,6 +74,7 @@ app.get('/test', function (req, res) {
 });
 
 app.use('/media', getMediaStreamRouter);
+app.use('/drive', scanDriveFilesRouter);
 
 app.listen(PORT, (err) => {
     if (!err) console.log('server is listening on', PORT);

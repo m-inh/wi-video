@@ -2,6 +2,43 @@ let google = require('googleapis');
 var fs = require('fs');
 var config = require('config');
 
+function findFolderByName(auth, folderName, callback) {
+    let drive = google.drive({
+        version: 'v3',
+        auth: auth
+    });
+    let condition = "name = '" + folderName + "' and mimeType = 'application/vnd.google-apps.folder'";
+    // console.log("CONDITION : ", condition);
+    drive.files.list({
+        q: condition,
+        orderBy: "createdTime"
+    }, function (err, result) {
+        if (err) return callback(err, null);
+        if (result.files.length > 0) {
+            callback(false, result.files[0].id);
+        } else {
+            callback(false, null);
+        }
+    });
+}
+
+function findFiles(auth, folderId, callback) {
+    let drive = google.drive({
+        version: 'v3',
+        auth: auth
+    });
+
+    let condition = "'" + folderId + "' in parents";
+    console.log("FIND FILES CONDITIONS : ", condition);
+    drive.files.list({
+        q: condition,
+        orderBy: "createdTime"
+    }, function (err, result) {
+        if (err) return callback(err, null);
+        callback(false, result);
+    });
+}
+
 function createFolder(auth, folderName, callback) {
     let drive = google.drive({
         version: 'v3',
@@ -56,7 +93,7 @@ function uploadFile(auth, folderId, filePath, driveName, callback) {
     }, function (err, file) {
         if (err) {
             // Handle error
-            console.error(err);
+            console.error("===CREATE FILE ERROR===== ", err);
             callback(err, null);
         } else {
             console.log('File Id: ', file.id);
@@ -67,5 +104,7 @@ function uploadFile(auth, folderId, filePath, driveName, callback) {
 
 module.exports = {
     createFolder: createFolder,
-    uploadFile: uploadFile
+    uploadFile: uploadFile,
+    findFiles: findFiles,
+    findFolderByName: findFolderByName
 }
