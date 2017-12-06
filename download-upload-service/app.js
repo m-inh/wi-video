@@ -47,6 +47,7 @@ app.use(function (req, res, next) {
     if (currentTime - oauth2Client.credentials.expiry_date > 0) {
         res.json({result: "Access Token Expired!"});
         delete req.auth;
+        next();
     } else {
         if (oauth2Client.credentials.refresh_token) {
             oauth2Client.refreshAccessToken(function (err, tokens) {
