@@ -31,6 +31,7 @@ fs.watchFile(path.join(config.app.videoTmp, 'videoTemp.webm'), function () {
 app.get('/cb', function (req, res, next) {
     let code = req.query.code;
     oauth2Client.getToken(code, function (err, tokens) {
+        // console.log(tokens);
         if (!err) {
             oauth2Client.credentials = tokens;
             res.redirect('/');
@@ -42,17 +43,47 @@ app.get('/cb', function (req, res, next) {
 });
 
 app.use(function (req, res, next) {
-    req.auth = oauth2Client;
-    next();
+    let currentTime = Date.now();
+    if (currentTime - oauth2Client.credentials.expiry_date > 0) {
+        res.json({result: "Access Token Expired!"});
+        delete req.auth;
+    } else {
+        if (oauth2Client.credentials.refresh_token) {
+            oauth2Client.refreshAccessToken(function (err, tokens) {
+                oauth2Client.credentials = tokens;
+                req.auth = oauth2Client;
+                next();
+            });
+        } else {
+            req.auth = oauth2Client;
+            next();
+        }
+    }
 });
 
 app.get('/', function (req, res) {
     if (req.auth.credentials.access_token) {
         res.send(req.auth);
     } else {
+        // console.log(url);
         res.redirect(url);
     }
 });
+
+//
+// app.use(function (req, res, next) {
+//     setInterval(function (req, res) {
+//         if (req.auth.credentials.refresh_token) {
+//             console.log("SET refresh");
+//             oauth2Client.refreshAccessToken(function (err, tokens) {
+//                 oauth2Client.credentials = tokens;
+//                 req.auth = oauth2Client;
+//             });
+//         }
+//     }, 1000 * 5);
+//     next();
+// });
+
 
 app.get('/test', function (req, res) {
     drive.uploadFile(req.auth, '1vl2UKPxoSqenNJxFWFQ0BpvxlXvgDhDz', 'D:/youtube/videoTemp.webm', 'test.mp4', function (err, result) {
