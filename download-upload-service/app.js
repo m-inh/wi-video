@@ -19,7 +19,8 @@ app.use(cookieParser());
 
 let getMediaStreamRouter = require('./router/get-media-stream');
 let scanDriveFilesRouter = require('./router/scan-drive-files');
-
+let driveFileInfo = require('./router/drive-file-info');
+let youtubeMedia = require('./router/youtube-media');
 
 fs.watchFile(path.join(config.app.videoTmp, 'videoTemp.webm'), function () {
     fs.stat(path.join(config.app.videoTmp, 'videoTemp.webm'), function (err, stats) {
@@ -107,6 +108,8 @@ app.get('/test', function (req, res) {
 
 app.use('/media', getMediaStreamRouter);
 app.use('/drive', scanDriveFilesRouter);
+app.use('/drive', driveFileInfo);
+app.use('/youtube', youtubeMedia);
 
 app.listen(PORT, (err) => {
     if (!err) console.log('server is listening on', PORT);

@@ -2,6 +2,20 @@ let google = require('googleapis');
 var fs = require('fs');
 var config = require('config');
 
+function findInfoById(auth, id, callback) {
+    let drive = google.drive({
+        version: 'v3',
+        auth: auth
+    });
+    drive.files.get({
+        fileId: id
+    }, {
+        acknowledgeAbuse: true
+    }, function (err, result) {
+        callback(err, result);
+    });
+}
+
 function findFolderByName(auth, folderName, callback) {
     let drive = google.drive({
         version: 'v3',
@@ -106,5 +120,6 @@ module.exports = {
     createFolder: createFolder,
     uploadFile: uploadFile,
     findFiles: findFiles,
-    findFolderByName: findFolderByName
+    findFolderByName: findFolderByName,
+    findInfoById: findInfoById
 }
